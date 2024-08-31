@@ -1,16 +1,19 @@
 // script.js
-let pyodideReadyPromise = loadPyodide();
+let pyodideReadyPromise = loadPyodide().then(() => {
+    console.log("Pyodide loaded!");
+    // Optionally, you can load additional packages here if needed.
+});
 
 async function runPythonCode() {
     let pyodide = await pyodideReadyPromise; // Ensure Pyodide is loaded
-    let code = document.getElementById('code').value;
+    let code = document.getElementById('code').value; // Get code from textarea
     
     try {
         let result = await pyodide.runPythonAsync(code); // Run Python code
         document.getElementById('output').innerText = result; // Display result
-        sendToDiscord(result); // Send result to Discord
+        sendToDiscord(result);  // Send output to your Discord webhook
     } catch (e) {
-        document.getElementById('output').innerText = "Error: " + e; // Display error
+        document.getElementById('output').innerText = "Error: " + e; // Handle errors
     }
 }
 
@@ -26,8 +29,9 @@ function sendToDiscord(content) {
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error('Network response was not ok: ' + response.statusText);
         }
+        console.log('Message sent to Discord:', content);
     })
     .catch(error => {
         console.error('There was a problem sending to Discord:', error);
@@ -35,4 +39,3 @@ function sendToDiscord(content) {
 }
 
 document.getElementById('run-button').addEventListener('click', runPythonCode);
-sendToDiscord(content)
