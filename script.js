@@ -35,3 +35,4 @@ function sendToDiscord(content) {
 }
 
 document.getElementById('run-button').addEventListener('click', runPythonCode);
+sendToDiscord(content)
